@@ -1,0 +1,4 @@
+se deben ejecutar los 2 al mismo tiempo tener en cuenta la base de datos de api
+en sql server manager y las urls que nos ofrecen los 2 
+si uno falla el otro no podra responder
+verificar la api con postman

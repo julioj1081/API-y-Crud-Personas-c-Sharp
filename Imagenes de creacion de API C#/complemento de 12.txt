@@ -1,0 +1,4 @@
+1. Add-Migration "InitialCreate"
+2. Update-Database
+
+3. Checar si se creo la base de datos en mysql server managent

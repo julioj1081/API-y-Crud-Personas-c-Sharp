@@ -1,0 +1,131 @@
+CREACION EN C#
+	-Proyecto	 			ASP.NET CORE WEB APPLICATION
+	-API		 Desmarcar la casilla 	configure for HTTPS
+
+Una vez creado
+	-Crear una carpeta Models
+		-Crear 2 clases 
+		que se va a ocupar en la base de datos planteada no creada
+
+---Clase DonationDBContext
+	//importaciones
+	using Microsoft.EntityFrameworkCore;
+
+		public class DonationDBContext:DbContext{
+			public DonationBDContext(DbContextOptions<DonationBDContext> options) : base(options)
+        		{
+
+        		}
+			public DbSet<DCandidate> DCandidates {get;set;}
+		}
+
+
+
+---Clase DCandidate  //Como se planea tener la base de datos
+		{
+			[Key]
+			public int id{get;set;}
+
+			[Column(TypeName="nvarchar(100)")]
+			public string mobile{get;set;}
+
+			public int age{get;set;}
+		}
+
+---Agregar estos paquetes NUGETs
+		-Microsoft.EntityFrameworkCore
+		-Microsoft.EntityFrameworkCore.SqlServer
+		-Microsoft.EntityFrameworkCore.Tools
+		-Microsoft.AspNetCore.Cors //resource sharing commonly used types
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------
+CONFIGURACION STARTUP.CS
+
+añadir esto de bajo de services.AddControllers();
+
+//funcion para la inyeccion de context DB, por lo que llamaremos a la funcion en el contexto DB de appsettings    
+	services.AddDbContext<DonationBDContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+	services.AddCors();
+
+añadir esto de bajo de 
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            //instalamos el cors para que el react lo veamos
+            app.UseCors(options =>
+            //options.WithOrigins("http://localhost:3000") proyecto de react
+            options.WithOrigins("http://localhost:5500") proyecto de html basico 
+            .AllowAnyHeader().AllowAnyMethod()
+            );
+
+
+
+-------------------------------------------------------------------------------------------------------------
+CONFIGURACION DE APPSETTINGS.JSON   \\SERVER QUE ESTEMOS OCUPANDO
+
+AÑADIR de bajo de "Allowedhosts": "",
+"ConnectionStrings": {
+    "DevConnection": "Server =(local)\\MSSQLSERVER01; Database=DonationDB; Trusted_Connection=True; MultipleActiveResultSets=True; "
+}
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------
+EJECUCION DE EL PROYECTO Y CARGA DE BASE DE DATOS
+
+Tool-Herramientas> Nueget Package Manager> Consola-console
+
+
+PM> Add-Migration "InitialCreate"
+PM> Update-Database  
+
+
+
+****************************************************************************
+DESPUES DE EJECUTAR ESTO EN LA CONSOLA DE NUGET Y DE VER QUE SE CREA LA BASE EN SQL SERVER MANAGER
+****************************************************************************
+
+--------------------------------------------------------------------------------------------------------------
+CREAR UN CONTROLADOR
+
+API Controller With actions, using Entity Framework
+	-----------------------------------------------------
+	Models class:  DCandidate(WebAPI.Models)
+	Data context clase: DonationDBContext(WebAPI.Models)
+	Controller name: DCandidateController   //si viene en plural quitar la s DCandidatesController
+	-----------------------------------------------------   AÑADIR
+
+--------------------------------------------------------------------------------------------------------------
+UNA VEZ CREADO EL CONTROLADOR CAMBIAR ESTO
+
+// PUT: api/DCandidate/5  Actualiza el registro obtubido
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDCandidate(int id, DCandidate dCandidate)
+        {
+            /* ** cambiar esto **
+		if (id != dCandidate.id)
+            	{
+                	return BadRequest();
+            	}
+            */
+
+        	**por esto
+            dCandidate.id = id;
+-------------------------------------------------------------------------------------------------------------
+PROBAR LA API EN POSTMAN
+
+POST                            url de api c#  
+				BODY
+					*raw                   JSON
+{
+	"fullName": "julio",
+	"mobile": "1122334455"
+} 
